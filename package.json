@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/BrandedNomad/AgarClone/issues"
   },
-  "homepage": "https://github.com/BrandedNomad/AgarClone#readme"
+  "homepage": "https://github.com/BrandedNomad/AgarClone#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^4.2.0"
+  }
 }
