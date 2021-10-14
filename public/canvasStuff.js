@@ -1,11 +1,6 @@
-function init(){
-    draw()
-    console.log(orbs)
-}
 
-//Generate random starting co-ordinates
-player.locX = Math.floor(500*Math.random() + 10)
-player.locY  = Math.floor(500*Math.random() + 10)
+
+
 
 //draw player on canvas
 function draw(){
@@ -19,20 +14,26 @@ function draw(){
     //clamp camera to the player
     let camX = -player.locX + canvas.width/2
     let camY = -player.locY + canvas.height/2
-    context.translate(camX,camY) //translate is cumulative
+    context.translate(camX,camY) //translate is cumulatives
 
-    //start over
-    context.beginPath()
-    //fill color
-    context.fillStyle = "rgb(255,0,0)"
-    //Draw a circle
-    context.arc(player.locX,player.locY,10,0,Math.PI *2)
-    //Fill the circle with color
-    context.fill()
-    //Draw a border around circle
-    context.lineWidth = 3;
-    context.strokeStyle = 'rgb(0,255,0)'
-    context.stroke()
+
+
+    //draw all the playerss
+    players.forEach((p)=>{
+        //start over
+        context.beginPath()
+        //fill color
+        context.fillStyle = p.color
+        //Draw a circle
+        context.arc(p.locX,p.locY,p.radius,0,Math.PI *2)
+        //Fill the circle with color
+        context.fill()
+        //Draw a border around circle
+        context.lineWidth = 3;
+        context.strokeStyle = 'rgb(0,255,0)'
+        context.stroke()
+
+    })
 
     //Add the orbs
     orbs.forEach((orb)=>{
@@ -47,10 +48,6 @@ function draw(){
         context.arc(orb.locX,orb.locY,orb.radius,0,Math.PI *2)
         //Fill the circle with color
         context.fill()
-        //Draw a border around circle
-        // context.lineWidth = 3;
-        // context.strokeStyle = 'rgb(0,255,0)'
-        // context.stroke()
 
     })
 
@@ -59,7 +56,6 @@ function draw(){
 }
 
 canvas.addEventListener('mousemove',(event)=>{
-    console.log(event)
     const mousePosition = {
         x: event.clientX,
         y: event.clientY
@@ -68,7 +64,6 @@ canvas.addEventListener('mousemove',(event)=>{
     let xVector;
     let yVector;
     if(angleDeg >= 0 && angleDeg < 90){
-        console.log("lower quad")
         xVector = 1 - (angleDeg/90);
         yVector = -(angleDeg/90);
     }else if(angleDeg >= 90 && angleDeg <= 180){
@@ -82,16 +77,10 @@ canvas.addEventListener('mousemove',(event)=>{
         yVector = (1 - ((angleDeg+90)/90));
     }
 
-    let speed = 10
-    let xV = xVector;
-    let yV = yVector;
+    player.xVector = xVector;
+    player.yVector = yVector;
 
-    if((player.locX < 5 && player.xVector < 0) || (player.locX > 500) && (xV > 0)){
-        player.locY -= speed * yV;
-    }else if((player.locY < 5 && yV > 0) || (player.locY > 500) && (yV < 0)){
-        player.locX += speed * xV;
-    }else{
-        player.locX += speed * xV;
-        player.locY -= speed * yV;
-    }
+
+
+
 })

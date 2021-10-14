@@ -1,7 +1,8 @@
 let windowHeight = $(window).height();
 let windowWidth = $(window).width();
 let player = {} //all things related to the player
-let orbs = {} //all things related to orbs
+let orbs = [] //all things related to orbs
+let players = [] //a list of all the players in the game
 
 
 let canvas = document.querySelector('#the-canvas')
