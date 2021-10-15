@@ -20,9 +20,7 @@ app.use(helmet())
 const expressServer = app.listen(port, ()=>{
     console.log("Server up and running on port " + port)
 })
-const io = new Server(expressServer)
-
-io.origins('*:*')
+const io = new Server(expressServer, {cors: {origin:'*'}})
 
 module.exports = {
     app,
