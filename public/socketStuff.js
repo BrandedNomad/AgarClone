@@ -1,6 +1,12 @@
 
 //connect to server
-let socket = io.connect("http://localhost:3000")
+let socket = io.connect("http://localhost:3000",{
+    withCredentials: true,
+    origin:true,
+    extraHeaders: {
+        "my-custom-header": "abcd"
+    }
+})
 
 //only executed once player clicks on start game
 function init(){
