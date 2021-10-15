@@ -6,11 +6,13 @@ const express = require("express")
 const path = require('path')
 const {Server} = require("socket.io")
 const helmet =  require("helmet")
+const cors = require('cors')
 
 //SERVER SETUP
 const port = process.env.PORT || 3000
 const app = express()
 const publicPath = path.join(__dirname,"./public")
+app.use(cors)
 app.use(express.static(publicPath))
 app.use(helmet())
 const expressServer = app.listen(port, ()=>{
