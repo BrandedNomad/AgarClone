@@ -12,7 +12,7 @@ const cors = require('cors')
 const port = process.env.PORT || 3000
 const app = express()
 const publicPath = path.join(__dirname,"./public")
-app.use(cors)
+app.use(cors())
 app.use(express.static(publicPath))
 app.use(helmet())
 const expressServer = app.listen(port, ()=>{
