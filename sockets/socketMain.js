@@ -10,12 +10,12 @@ const checkForPlayerCollisions = require('./checkCollisions').checkForPlayerColl
 let orbs = []
 let players = []
 let settings = {
-    defaultOrbs: 500,
+    defaultOrbs: 5000,
     defaultSpeed: 6,
     defaultSize: 6,
     defaultZoom: 1.5,
-    worldWidth: 500,
-    worldHeight: 500,
+    worldWidth: 5000,
+    worldHeight: 5000,
 }
 
 //create orbs
