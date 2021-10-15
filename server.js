@@ -22,6 +22,8 @@ const expressServer = app.listen(port, ()=>{
 })
 const io = new Server(expressServer)
 
+io.origins('*:*')
+
 module.exports = {
     app,
     io
