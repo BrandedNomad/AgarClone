@@ -21,7 +21,15 @@ let settings = {
 //create orbs
 initGame()
 
-//handle connection
+setInterval(()=>{
+    if(players.length >0){
+        io.to('game').emit("tock",{
+            players
+        })
+    }
+},33)
+
+//handle connection.
 io.sockets.on('connection',(socket)=>{
     //A player has connected
     let player = {};
@@ -41,8 +49,7 @@ io.sockets.on('connection',(socket)=>{
 
         //issue a message to every connected socket at a rate of 30 FPS
         setInterval(()=>{
-            io.to('game').emit("tock",{
-                players,
+            socket.emit("tickTock",{
                 playerX:player.playerData.locX,
                 playerY:player.playerData.locY
             })
@@ -70,10 +77,10 @@ io.sockets.on('connection',(socket)=>{
         let xV = player.playerConfig.xVector = data.xVector;
         let yV = player.playerConfig.yVector = data.yVector;
 
-        if((player.playerData.locX < 5 && xV < 0) || (player.playerData.locX > 500) && (xV > 0)){
+        if((player.playerData.locX < 5 && xV < 0) || (player.playerData.locX > settings.worldWidth) && (xV > 0)){
             player.playerData.locY -= speed * yV;
 
-        }else if((player.playerData.locY < 5 && yV > 0) || (player.playerData.locY > 500) && (yV < 0)){
+        }else if((player.playerData.locY < 5 && yV > 0) || (player.playerData.locY > settings.worldHeight) && (yV < 0)){
             player.playerData.locX += speed * xV;
 
         }else{
@@ -81,14 +88,56 @@ io.sockets.on('connection',(socket)=>{
             player.playerData.locY -= speed * yV;
         }
 
+        //ORB Collision
         let capturedOrb = checkForOrbCollisions(player.playerData, player.playerConfig,orbs,settings)
         capturedOrb.then((data)=>{
             //runs if collision occurs
-            console.log("orb collision")
+            //emit to all sockets the orb to replace
+            const orbData = {
+                orbIndex: data,
+                newOrb:orbs[data]
+            }
+            //updating every socket about leaderboard changes
+            let leaderBoard = getLeaderBoard()
+            io.sockets.emit("updateLeaderBoard",leaderBoard)
+            io.sockets.emit('orbSwitch',orbData)
 
         }).catch((error)=>{
-            console.log("No collision")
+           // console.log("No collision")
         })
+
+        //PLAYER collision
+        let playerDeath = checkForPlayerCollisions(player.playerData,player.playerConfig,players,player.socketId)
+        playerDeath.then((data)=>{
+            //updating every socket about leaderboard changes
+            let leaderBoard = getLeaderBoard()
+            io.sockets.emit("updateLeaderBoard",leaderBoard)
+            //Let everyone know a player died
+            io.sockets.emit("playerDeath", data)
+
+        }).catch((error)=>{
+            //console.log("no player collision")
+        })
+
+
+    })
+
+    socket.on('disconnect',(data)=>{
+        //find out who left...which of the players?
+        //first make sure the player exists to avoid errors
+        if(player.playerData){
+            players.forEach((currentPlayer,i)=>{
+                if(currentPlayer.uid === player.playerData.uid){
+                    //if the player exists remove the player
+                    players.splice(i,1)
+                    //update leaderboard
+                    io.sockets.emit("updateLeaderBoard",getLeaderBoard())
+                }
+            });
+            //TODO: update the database
+            const updateStats = "" //update database
+        }
+
 
 
     })
@@ -105,6 +154,22 @@ function initGame(){
     for(let i = 0; i < settings.defaultOrbs; i++){
         orbs.push(new Orb(settings))
     }
+}
+
+function getLeaderBoard(){
+    //sort players in desc order
+    players.sort((a,b)=>{
+        return b.score - a.score;
+    })
+
+    let leaderBoard = players.map((currentPlayer)=>{
+        return {
+            name: currentPlayer.name,
+            score: currentPlayer.score
+        }
+    })
+
+    return leaderBoard
 }
 
 

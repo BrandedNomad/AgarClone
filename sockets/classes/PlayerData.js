@@ -1,8 +1,12 @@
 /**
  * @overview The playerData class contains everything that all the other players need to know about
  */
+const {v4:uuidv4} = require('uuid')
+
+
 class PlayerData {
     constructor(playerName, settings) {
+        this.uid = uuidv4();
         this.name = playerName;
         this.locX = Math.floor(settings.worldWidth * Math.random() + 10);
         this.locY = Math.floor(settings.worldHeight * Math.random() + 10);

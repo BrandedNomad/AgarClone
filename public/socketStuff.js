@@ -25,8 +25,39 @@ socket.on("initReturn",(data)=>{
 socket.on("tock",(data)=>{
     //update list of players
     players = data.players
+})
+
+socket.on("orbSwitch",(data)=>{
+    //remove orb from orbs array, and replace it with a new orb.
+    orbs.splice(data.orbIndex,1,data.newOrb)
+
+})
+
+socket.on("tickTock",(data)=>{
+    //update player location
     player.locX = data.playerX
     player.locY = data.playerY
+})
+
+socket.on("updateLeaderBoard",(data)=>{
+    //first clear leaderboard
+    document.querySelector(".leader-board").innerHTML = ""
+    //update leaderboard with new score
+    data.forEach((currentPlayer)=>{
+        document.querySelector(".leader-board").innerHTML += `
+        <li class=leader-board-player>${currentPlayer.name} - ${currentPlayer.score}</li>
+        `
+    })//
+
+})
+
+socket.on("playerDeath",(data)=>{
+    document.querySelector("#game-message").innerHTML = `${data.died.name} absorbed by ${data.killedBy.name}`
+    $("#game-message").css("background-color","#00e6e6")
+    $("#game-message").css("opacity","1")
+
+    $("#game-message").show()
+    $("#game-message").fadeOut(5000)
 
 
 })
